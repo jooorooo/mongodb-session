@@ -1,0 +1,33 @@
+{
+    "name": "simexis/mongodb-session",
+    "description": "A MongoDB session driver for Laravel 5",
+    "keywords": ["laravel","session","mongodb","mongo","driver"],
+    "authors": [
+        {
+            "name": "Georgi Nachev",
+            "homepage": "http://simexis.com"
+        },
+        {
+            "name": "CloudCart LTD",
+            "homepage": "https://cloudcart.com"
+        }
+    ],
+    "license" : "MIT",
+    "require": {
+        "php": ">=5.6.0",
+        "jenssegers/mongodb": "*",
+        "illuminate/session": "~5.3"
+    },
+    "autoload": {
+        "psr-0": {
+            "Simexis\\Mongodb\\Session": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Simexis\\Mongodb\\SessionServiceProvider"
+            ]
+        }
+    }
+}
