@@ -22,12 +22,5 @@
         "psr-0": {
             "Simexis\\Mongodb\\Session": "src/"
         }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Simexis\\Mongodb\\SessionServiceProvider"
-            ]
-        }
     }
 }
