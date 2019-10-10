@@ -2,6 +2,7 @@
 
 namespace Simexis\Mongodb\Session;
 
+use MongoDB\BSON\UTCDateTime;
 use SessionHandlerInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Contracts\Auth\Guard;
@@ -140,6 +141,10 @@ class MongoDbSessionHandler implements SessionHandlerInterface
             ['upsert' => true]
         );
 
+        try {
+            $this->getCollection()->createIndex(['last_activity_gc_' . $this->minutes => 1], ['expireAfterSeconds' => $this->minutes * 60]);
+        } catch (\Throwable $e) {}
+
         return true;
     }
 
@@ -153,8 +158,8 @@ class MongoDbSessionHandler implements SessionHandlerInterface
     {
         $payload = [
             'payload' => $data,
-            'last_activity' => $this->currentTime(),
-
+            'last_activity' => $last_activity = $this->currentTime(),
+            'last_activity_gc_' . $this->minutes => new UTCDateTime($last_activity * 1000)
         ];
 
         if (! $this->container) {
