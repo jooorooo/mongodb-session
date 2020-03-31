@@ -252,9 +252,9 @@ class MongoDbSessionHandler implements SessionHandlerInterface
      */
     public function gc($lifetime)
     {
-        $this->getCollection()->deleteMany([
+        /*$this->getCollection()->deleteMany([
             'last_activity' => ['$lt' => new \MongoDB\BSON\UTCDateTime( ($this->currentTime() - $lifetime) * 1000 )],
-        ]);
+        ]);*/
 
         return true;
     }
