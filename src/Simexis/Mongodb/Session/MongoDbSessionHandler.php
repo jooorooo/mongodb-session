@@ -141,10 +141,6 @@ class MongoDbSessionHandler implements SessionHandlerInterface
             ['upsert' => true]
         );
 
-        try {
-            $this->getCollection()->createIndex(['last_activity_gc_' . $this->minutes => 1], ['expireAfterSeconds' => $this->minutes * 60]);
-        } catch (\Throwable $e) {}
-
         return true;
     }
 
@@ -156,10 +152,12 @@ class MongoDbSessionHandler implements SessionHandlerInterface
      */
     protected function getDefaultPayload($data)
     {
+        $last_activity = $this->currentTime();
+
         $payload = [
             'payload' => $data,
-            'last_activity' => $last_activity = $this->currentTime(),
-            'last_activity_gc_' . $this->minutes => new UTCDateTime($last_activity * 1000)
+            'last_activity' => new UTCDateTime($last_activity * 1000),
+            'expire' => new UTCDateTime(($last_activity + ($this->minutes * 60)) * 1000)
         ];
 
         if (! $this->container) {
@@ -168,7 +166,7 @@ class MongoDbSessionHandler implements SessionHandlerInterface
 
         return tap($payload, function (&$payload) {
             $this->addUserInformation($payload)
-                 ->addRequestInformation($payload);
+                ->addRequestInformation($payload);
         });
     }
 
