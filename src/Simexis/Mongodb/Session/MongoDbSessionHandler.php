@@ -9,6 +9,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\InteractsWithTime;
 use Illuminate\Contracts\Container\Container;
 use MongoDb\Client;
+use Throwable;
 
 class MongoDbSessionHandler implements SessionHandlerInterface
 {
@@ -145,6 +146,19 @@ class MongoDbSessionHandler implements SessionHandlerInterface
     }
 
     /**
+     * Create expiration index.
+     *
+     * @return void
+     */
+    public function createExpireIndex()
+    {
+        try {
+            $this->getCollection()
+                ->createIndex(['expire' => 1], ['expireAfterSeconds' => 0]);
+        } catch (Throwable $e) {}
+    }
+
+    /**
      * Get the default payload for the session.
      *
      * @param  string  $data
@@ -260,7 +274,7 @@ class MongoDbSessionHandler implements SessionHandlerInterface
     /**
      * @return \MongoDB\Collection
      */
-    private function getCollection()
+    protected function getCollection()
     {
         if (null === $this->collection) {
             $this->collection = $this->getMongo()->selectCollection($this->database, $this->table);
